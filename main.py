@@ -1,5 +1,7 @@
+from xml.dom.minidom import Element
 from flask import Flask, jsonify, render_template, request
 from flask_sqlalchemy import SQLAlchemy
+import random
 
 app = Flask(__name__)
 
@@ -27,10 +29,49 @@ class Cafe(db.Model):
 @app.route("/")
 def home():
     return render_template("index.html")
-    
+all_cafes = db.session.query(Cafe).all()
+print (all_cafes)   
 
 ## HTTP GET - Read Record
+@app.route('/random', methods =["GET"])
+def gte_random_cafe():
+    all_cafes = db.session.query(Cafe).all()
+    random_cafe = random.choice(all_cafes)
+    return jsonify(cafe={
+        "id": random_cafe.id,
+        "name": random_cafe.name,
+        "map_url": random_cafe.map_url,
+        "img_url": random_cafe.img_url,
+        "location": random_cafe.location,
+        "seats": random_cafe.seats,
+        "has_toilet": random_cafe.has_toilet,
+        "has_wifi": random_cafe.has_wifi,
+        "has_sockets": random_cafe.has_sockets,
+        "can_take_calls": random_cafe.can_take_calls,
+        "coffee_price": random_cafe.coffee_price,
+    })
 
+@app.route('/all', methods =["GET"])
+def all():
+    total_cafes = []
+    all_cafes = db.session.query(Cafe).all()
+    for random_cafe in all_cafes:
+        element = {
+        "id": random_cafe.id,
+        "name": random_cafe.name,
+        "map_url": random_cafe.map_url,
+        "img_url": random_cafe.img_url,
+        "location": random_cafe.location,
+        "seats": random_cafe.seats,
+        "has_toilet": random_cafe.has_toilet,
+        "has_wifi": random_cafe.has_wifi,
+        "has_sockets": random_cafe.has_sockets,
+        "can_take_calls": random_cafe.can_take_calls,
+        "coffee_price": random_cafe.coffee_price,
+    }
+        total_cafes.append(element)
+    return jsonify(cafes = total_cafes)
+        
 ## HTTP POST - Create Record
 
 ## HTTP PUT/PATCH - Update Record
