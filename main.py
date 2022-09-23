@@ -32,7 +32,7 @@ def home():
 all_cafes = db.session.query(Cafe).all()
 print (all_cafes)   
 
-## HTTP GET - Read Record
+## HTTP GET - Read Record Randmom
 @app.route('/random', methods =["GET"])
 def gte_random_cafe():
     all_cafes = db.session.query(Cafe).all()
@@ -51,6 +51,7 @@ def gte_random_cafe():
         "coffee_price": random_cafe.coffee_price,
     })
 
+#Extracción de todos los registros
 @app.route('/all', methods =["GET"])
 def all():
     total_cafes = []
@@ -71,6 +72,35 @@ def all():
     }
         total_cafes.append(element)
     return jsonify(cafes = total_cafes)
+
+## Extracción de un registro según un parametro
+
+
+@app.route("/search/<direction>")
+def search(direction):
+    total_locations = []
+    locations = Cafe.query.filter_by(location = direction).all()
+    for location in locations:
+        element = {
+        "id": location.id,
+        "name": location.name,
+        "map_url": location.map_url,
+        "img_url": location.img_url,
+        "location": location.location,
+        "seats": location.seats,
+        "has_toilet": location.has_toilet,
+        "has_wifi": location.has_wifi,
+        "has_sockets": location.has_sockets,
+        "can_take_calls": location.can_take_calls,
+        "coffee_price": location.coffee_price,
+    }
+        total_locations.append(element)
+    if total_locations == []:
+        return jsonify(error = {"Not Found":"Sorry, we don't have a cafe at that location"})
+    else:
+        return jsonify(cafes = total_locations)
+
+
         
 ## HTTP POST - Create Record
 
